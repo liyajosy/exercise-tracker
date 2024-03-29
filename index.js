@@ -8,6 +8,7 @@ app.use(cors())
 app.use(express.static('public'));
 
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json())
 
 
 app.get('/', (req, res) => {
@@ -32,7 +33,7 @@ app.post('/api/users/:_id/exercises',(req, res)=>{
   createExercise(req.params._id, req.body, ( data)=>{
     if(data){
       const stringDate = new Date(data.date).toDateString()
-      console.log(data.username)
+      console.log(data.username +"---"+stringDate)
        res.json({
         _id:data._id,
         username: data.username, 

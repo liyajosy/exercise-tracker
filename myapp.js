@@ -64,8 +64,16 @@ const createExercise= async(userid, info, done) =>{
     const user = await User.findById( userid) 
     let  newdate    
     if(user){  
-        newdate = info.date ? new Date(info.date): new Date()
-                   
+        let isValid = Date.parse(info.date);
+        if(isNaN(isValid)){
+            newdate = new Date()
+        }else{
+            newdate = new Date(info.date+" GMT-5")
+        }
+        //newdate = info.date ? new Date(info.date): new Date()
+        console.log("----------------------------")
+        console.log("info date:"+info.date)  
+              console.log("newdate:"+newdate)     
         const exercise = new Exercise({
             userId : userid,
             description : info.description,
