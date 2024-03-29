@@ -17,10 +17,10 @@ app.get('/', (req, res) => {
 const createUser = require('./myapp.js').createUser;
 app.post('/api/users', (req, res)=>{
   createUser(req.body.username, (err, data)=>{
-    if(err){
-      return res.json(err);
+    if(data){
+       res.json(data);
     }else{
-      return res.json(data);
+       res.json(err);
     }
   })
   
@@ -28,35 +28,59 @@ app.post('/api/users', (req, res)=>{
 
 const createExercise = require('./myapp.js').createExercise;
 app.post('/api/users/:_id/exercises',(req, res)=>{
-  console.log("id ::"+req.params._id);
-  createExercise(req.params._id, req.body, (err, data)=>{
-    if(err){
-      return res.json(err);
+ // console.log("id ::"+req.params._id);
+  createExercise(req.params._id, req.body, ( data)=>{
+    if(data){
+      const stringDate = new Date(data.date).toDateString()
+      console.log(data.username)
+       res.json({
+        _id:data._id,
+        username: data.username, 
+        date: stringDate,
+        duration: Number (data.duration), 
+        description :data.description   
+                        
+        });      
     }else{
-      return res.json(data);
+       res.json({error :"error"});
     }
   })
 });
 
 const getLogs = require('./myapp.js').getLogs;
 app.get('/api/users/:_id/logs',(req, res)=>{
-  console.log("id ::"+req.params._id);
-  getLogs(req.params._id, (err, data)=>{
-    if(err){
-      return res.json(err);
-    }else{
-      return res.json(data);
-    }
+  
+  getLogs(req.params._id, req.query, (data)=>{
+  
+    if(data){
+      
+      const logDetails = data.logs.map((item)=>{
+        const stringDate = new Date(item.date).toDateString()
+        console.log("type ::"+typeof stringDate)
+        return ({
+          description: item.description,
+          duration :item.duration,
+          date : stringDate
+         })          
+      })      
+        res.json( { _id:data.user._id, username:data.user.username , count : data.logs.length, log: logDetails})
+              
+  } 
+  else{
+    console.log("---errr----")
+    res.json({err :"error"})
+  } 
+  
   })
 })
 
 const getUsers = require('./myapp.js').getUsers;
 app.get('/api/users', (req, res) => {
   getUsers((err, data)=>{
-    if(err){
-      return res.json(err);
+    if(data){
+       res.json(data);
     }else{
-      return res.json(data);
+       res.json(err);
     }
    })
   
